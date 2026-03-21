@@ -14,8 +14,5 @@ jobs:
       - name: Install Golang
         uses: actions/setup-go@v6
         
-      - name: Go build
-        run: go mod init devops-elective-itmo-2026-1lab
-        
       - name: Go run
         run: go run main.go
