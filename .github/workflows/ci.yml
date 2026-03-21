@@ -13,6 +13,8 @@ jobs:
         
       - name: Install Golang
         uses: actions/setup-go@v6
+        with:
+          go-version-file: 'go.mod'
         
       - name: Go run
         run: go run main.go
