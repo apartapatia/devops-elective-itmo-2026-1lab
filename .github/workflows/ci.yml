@@ -1,0 +1,21 @@
+name: Test My Containers Implemitation CI
+
+on:
+   push:
+      branches: ["main"]
+      
+jobs:
+   build-and-test:
+      runs-on: ubuntu-latest
+      steps:
+      - name: Download source code
+        uses: actions/checkout@v6
+        
+      - name: Install Golang
+        uses: actions/setup-go@v6
+        
+      - name: Go build
+        run: go mod init devops-elective-itmo-2026-1lab && go mod tidy
+        
+      - name: Go run
+        run: go run main.go
