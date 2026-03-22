@@ -44,7 +44,7 @@
 		"path": "rootfs",
 		"readonly": true
 	},
-	"hostname": "runc",
+	"hostname": "apartapatia-dev-containers",
 	"mounts": [
 		{
 			"destination": "/proc",
