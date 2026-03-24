@@ -145,7 +145,7 @@ func child(config Config, containerId string) {
 	stdConnect(cmd)
 
 	syscall.Sethostname([]byte(config.Hostname))
-	if err := cmd.Run(); err != nil {
+	if err := syscall.Exec(cmd.Path, cmd.Args,  os.Environ()); err != nil {
 		fmt.Printf("ошибка запуска child: %v\n", err)
 		os.Exit(1)
 	}
