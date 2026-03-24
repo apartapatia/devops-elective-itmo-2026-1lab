@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"syscall"
 )
 
@@ -77,7 +78,7 @@ func stdConnect(cmd *exec.Cmd) {
 func run(config Config, containerId string) {
 	exeLinuxPath, err := os.Executable()
 	if err != nil {
-		fmt.Printf("Ошибка получаения exe path: %v\n", err)
+		fmt.Printf("exe path не поулчен: %v\n", err)
 		os.Exit(1)
 	}
 
@@ -93,19 +94,59 @@ func run(config Config, containerId string) {
 	}
 
 	if err := cmd.Run(); err != nil {
-		fmt.Printf("Ошибка запуска parent процесса: %v\n", err)
+		fmt.Printf("parent процесс не запустился: %v\n", err)
 		os.Exit(1)
 	}
 }
 
-func child(config Config, containerId string) { // containerId зачем тут он нужен?
-	cmd := exec.Command(config.Process.Args[0], config.Process.Args[1:]...)
+func child(config Config, containerId string) {
+	runtimeName := "apartapatia-runtime"
+	basePath := filepath.Join("/var/lib", runtimeName, containerId)
 
+	upperDir := filepath.Join(basePath, "upper")
+	workDir := filepath.Join(basePath, "work")
+	mergedDir := filepath.Join(basePath, "merged")
+
+	lowerDirAbs, err := filepath.Abs(config.Root.Path)
+	if err != nil {
+		fmt.Printf("rootfs не получен: %v\n", err)
+		os.Exit(1)
+	}
+
+	os.MkdirAll(upperDir, 0755)
+	os.MkdirAll(workDir, 0755)
+	os.MkdirAll(mergedDir, 0755)
+
+	overlayOptions := fmt.Sprintf("lowerdir=%s,upperdir=%s,workdir=%s", lowerDirAbs, upperDir, workDir)
+	err = syscall.Mount("overlay", mergedDir, "overlay", 0, overlayOptions)
+	if err != nil {
+		fmt.Printf("overlayfs не смонтировался: %v\n", err)
+		os.Exit(1)
+	}
+
+	err = syscall.Chroot(mergedDir)
+	if err != nil {
+		fmt.Printf("chroot отработал с ошибкой: %v\n", err)
+		os.Exit(1)
+	}
+
+	err = syscall.Chdir("/")
+	if err != nil {
+		fmt.Printf("chdir отработал с ошибкой: %v\n", err)
+		os.Exit(1)
+	}
+
+	err = syscall.Mount("proc", "/proc", "proc", 0, "")
+	if err != nil {
+		fmt.Printf("/proc не смонтировался: %v\n", err)
+	}
+
+	cmd := exec.Command(config.Process.Args[0], config.Process.Args[1:]...)
 	stdConnect(cmd)
 
 	syscall.Sethostname([]byte(config.Hostname))
 	if err := cmd.Run(); err != nil {
-		fmt.Printf("Ошибка запуска child процесса: %v\n", err)
+		fmt.Printf("ошибка запуска child: %v\n", err)
 		os.Exit(1)
 	}
 }
@@ -113,7 +154,7 @@ func child(config Config, containerId string) { // containerId зачем тут
 func main() {
 	configJson, err := os.Open("config.json")
 	if err != nil {
-		fmt.Printf("Ошибка чтения config.json: %v\n", err)
+		fmt.Printf("config.json не считался: %v\n", err)
 		os.Exit(1)
 	}
 	defer configJson.Close()
@@ -122,13 +163,13 @@ func main() {
 
 	err = json.NewDecoder(configJson).Decode(&config)
 	if err != nil {
-		fmt.Printf("Ошибка парсинга config.json: %v\n", err)
+		fmt.Printf("config.json не распарсился: %v\n", err)
 		os.Exit(1)
 	}
 
-	fmt.Println("Успешное открытие конфига 🎉")
-	fmt.Printf("HOSTNAME: %s\n", config.Hostname)
-	fmt.Printf("EXECUTABLE PROGRAMM: %v\n", config.Process.Args)
+	fmt.Println("успешное открытие конфига 🎉")
+	fmt.Printf("имя хоста: %s\n", config.Hostname)
+	fmt.Printf("программа для запуска: %v\n", config.Process.Args)
 
 	switch os.Args[1] {
 	case "run":
