@@ -29,7 +29,7 @@ test: build setup-rootfs
 	go run gotest.tools/gotestsum@latest \
 		--format testname \
 		--junitfile test-results.xml \
-		-- -v -count=1 ./...
+		-- -v -count=1 -exec sudo ./...
 
 clean:
 	rm -f $(BINARY) test_runner test-results.*
