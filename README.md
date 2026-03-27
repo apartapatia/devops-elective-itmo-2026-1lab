@@ -3,7 +3,7 @@
 [![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?style=for-the-badge&logo=go&logoColor=white&labelColor=000000)](https://golang.org/)
 [![Linux](https://img.shields.io/badge/Linux-required-FF9900?style=for-the-badge&logo=linux&logoColor=white&labelColor=000000)](https://www.kernel.org/)
 [![CI Status](https://img.shields.io/github/actions/workflow/status/apartapatia/devops-elective-itmo-2026-1lab/ci.yml?style=for-the-badge&label=apartapatia-runtime%20CI&color=2ea44f&logo=github&logoColor=white&labelColor=000000)](https://github.com/apartapatia/devops-elective-itmo-2026-1lab/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/Tests-5%20suites-6866cc?style=for-the-badge&labelColor=000000)](https://github.com/apartapatia/devops-elective-itmo-2026-1lab/actions/workflows/ci.yml)
+[![Tests](https://img.shields.io/badge/Tests-12%20passed-6866cc?style=for-the-badge&labelColor=000000)](https://github.com/apartapatia/devops-elective-itmo-2026-1lab/actions/workflows/ci.yml)
 # Отчет по работе
 
 
