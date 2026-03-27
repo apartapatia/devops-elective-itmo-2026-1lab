@@ -1,10 +1,10 @@
-BINARY		= apartapatia-runtime
-ALPINE_V	= v3.23
-ALPINE_PV	= 3.23.3
-LINT_V		= 2.11.4
-LINT_VR 	= 2
+BINARY    = apartapatia-runtime
+ALPINE_V  = v3.23
+ALPINE_PV = 3.23.3
+LINT_V    = v2.11.4
+LINT_VR   = 2
 
-.PHONY: all build run test clean setup-rootfs
+.PHONY: all build run lint test clean setup-rootfs
 
 all: build
 
@@ -22,14 +22,14 @@ setup-rootfs:
 run: build setup-rootfs
 	sudo ./$(BINARY) run
 
+lint:
+	go run github.com/golangci/golangci-lint/v$(LINT_VR)/cmd/golangci-lint@$(LINT_V) run ./...
+
 test: build setup-rootfs
-	go run github.com/golangci/golangci-lint/v$(LINT_VR)/cmd@v$(LINT_V) run ./... || true
-	go test -c -o test_runner .
 	go run gotest.tools/gotestsum@latest \
 		--format testname \
 		--junitfile test-results.xml \
-		--raw-command -- \
-		bash -c "sudo ./test_runner -test.v -test.count=1 | go tool test2json -t -p $(BINARY)"
+		-- -v -count=1 ./...
 
 clean:
 	rm -f $(BINARY) test_runner test-results.*

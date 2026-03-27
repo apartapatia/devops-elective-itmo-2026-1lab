@@ -1,4 +1,4 @@
-name: Test My Containers Implemitation CI
+name: Test My Containers Implementation CI
 
 on:
    push:
@@ -13,6 +13,16 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
+          cache: true
+
+      - name: Build
+        run: make build
+
+      - name: Setup rootfs
+        run: make setup-rootfs
+
+      - name: Lint
+        run: make lint
 
       - name: Run tests
         run: make test

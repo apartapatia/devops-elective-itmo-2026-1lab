@@ -152,6 +152,16 @@ func child(config Config, containerId string) {
 }
 
 func main() {
+	if os.Geteuid() != 0 {
+		fmt.Fprintln(os.Stderr, "запуск контейнера через sudo")
+		os.Exit(1)
+	}
+
+	if len(os.Args) < 2 {
+		fmt.Fprintln(os.Stderr, "ошибка кол-ва аргументов: apartapatia-runtime <run|child> [container-id]")
+		os.Exit(1)
+	}
+
 	configJson, err := os.Open("config.json")
 	if err != nil {
 		fmt.Printf("config.json не считался: %v\n", err)
@@ -167,7 +177,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println("успешное открытие конфига 🎉")
+	fmt.Println("успешное открытие конфига")
 	fmt.Printf("имя хоста: %s\n", config.Hostname)
 	fmt.Printf("программа для запуска: %v\n", config.Process.Args)
 
@@ -177,9 +187,15 @@ func main() {
 		fmt.Printf("Container ID: %s\n", containerId)
 		run(config, containerId)
 	case "child":
+		if len(os.Args) < 3 {
+			fmt.Fprintln(os.Stderr, "не верный запуск child: apartapatia-runtime child <container-id>")
+			os.Exit(1)
+		}
 		containerId := os.Args[2]
 		child(config, containerId)
 	default:
-		panic("я упал")
+		fmt.Fprintf(os.Stderr, "неизвестная команда: %s\n", os.Args[1])
+		fmt.Fprintln(os.Stderr, "используй apartapatia-runtime <run|child>")
+		os.Exit(1)
 	}
 }

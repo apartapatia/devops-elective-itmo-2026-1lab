@@ -175,6 +175,9 @@ func (s *ContainerTestSuite) TestHostname() {
 }
 
 func TestContainerSuite(t *testing.T) {
+	if os.Geteuid() != 0 {
+		t.Skip("скип тестов") // нужно исправить UID
+	}
 	suite.Run(t, new(ContainerTestSuite))
 }
 
