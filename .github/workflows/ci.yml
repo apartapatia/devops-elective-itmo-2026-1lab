@@ -36,5 +36,5 @@ jobs:
       - name: Test summary
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
-          paths: test-results.xml
+            files: "test-results.xml"
         if: always()
