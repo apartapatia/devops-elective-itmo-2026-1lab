@@ -1,5 +1,12 @@
 # devops-elective-itmo-2026-1lab
 
+[![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://golang.org/)
+[![Linux](https://img.shields.io/badge/Linux-required-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://www.kernel.org/)
+
+
+[![CI Status](https://github.com/apartapatia/devops-elective-itmo-2026-1lab/actions/workflows/ci.yml/badge.svg?style=for-the-badge)](https://github.com/apartapatia/devops-elective-itmo-2026-1lab/actions/workflows/ci.yml)
+[![Test Suites](https://img.shields.io/badge/Tests-5%20suites-0096FF?style=for-the-badge)](https://github.com/apartapatia/devops-elective-itmo-2026-1lab/actions/workflows/ci.yml)
+
 # Отчет по работе
 
 
