@@ -4,8 +4,20 @@
 [![Linux](https://img.shields.io/badge/Linux-required-FF9900?style=for-the-badge&logo=linux&logoColor=white&labelColor=000000)](https://www.kernel.org/)
 [![CI Status](https://img.shields.io/github/actions/workflow/status/apartapatia/devops-elective-itmo-2026-1lab/ci.yml?style=for-the-badge&label=apartapatia-runtime%20CI&color=2ea44f&logo=github&logoColor=white&labelColor=000000)](https://github.com/apartapatia/devops-elective-itmo-2026-1lab/actions/workflows/ci.yml)
 [![Tests](https://img.shields.io/badge/Tests-12%20passed-6866cc?style=for-the-badge&labelColor=000000)](https://github.com/apartapatia/devops-elective-itmo-2026-1lab/actions/workflows/ci.yml)
-# Отчет по работе
 
+---
+
+## Отчет по работе
+
+## Тестирование
+Для проверки работоспособности рантайма написан набор интеграционных тестов.
+
+**Что покрывают тесты:**
+1. **Изоляцию Namespaces (`TestNamespaces`):** Проверяется, что символические ссылки на пространства имен `UTS`, `PID` и `MNT` в `/proc/<pid>/ns/` у хостовой системы и контейнера различаются.
+2. **Структуру файловой системы (`TestContainerDirectoryStructure`)**:**Проверяется, что рантайм корректно создает слои OverlayFS (`upper`, `work`, `merged`) в директории `/var/lib/apartapatia-runtime/<id>`.
+3. **Изоляцию дерева процессов (`TestPID1`):** Проверяется, что целевой процесс, заданный в конфиге, запускается внутри контейнера с `PID = 1`.
+4. **Монтирование `/proc` (`TestProcMount`):** Проверяет наличие и доступность виртуальной файловой системы `/proc` внутри изолированного окружения.
+5. **Смену имени хоста (`TestHostname`):** С помощью утилиты `nsenter` проверяется, что UTS namespace работает корректно и внутри контейнера установлено имя хоста из конфига.
 
 ## Список вопросов для самостоятельного исследования и ответов
 
