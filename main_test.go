@@ -93,6 +93,10 @@ func (s *ContainerTestSuite) TearDownSuite() {
 	s.T().Log("[teardown] очистка завершена")
 }
 
+// ============================================================================
+// Для каждого контейнера при его запуске должны создаваться новые namespaces 
+// ============================================================================
+
 func (s *ContainerTestSuite) TestNamespaces() {
 	tests := []struct {
 		name   string
@@ -120,6 +124,14 @@ func (s *ContainerTestSuite) TestNamespaces() {
 	}
 }
 
+// ============================================================================
+// В качестве rootfs использовать Alpine, но chroot делать на overlayfs:
+// lowerdir — базовый rootfs (Alpine)
+// upperdir — /var/lib/{имя-утилиты}/{id}/upper
+// workdir — /var/lib/{имя-утилиты}/{id}/work
+// merged - /var/lib/{имя-утилиты}/{id}/merged
+// ============================================================================
+
 func (s *ContainerTestSuite) TestContainerDirectoryStructure() {
 	require.NotEmpty(s.T(), s.containerId, "containerId не определён. ошибка нахождения дочернего процесса")
 
@@ -139,6 +151,10 @@ func (s *ContainerTestSuite) TestContainerDirectoryStructure() {
 	})
 }
 
+// ============================================================================
+// Внутри контейнера монтировать /proc для корректной работы утилит типа ps
+// ============================================================================
+
 func (s *ContainerTestSuite) TestProcMount() {
 	procPath := filepath.Join("/proc", strconv.Itoa(s.containerPid), "root", "proc")
 	s.T().Logf("[proc] проверяем %s", procPath)
@@ -146,6 +162,10 @@ func (s *ContainerTestSuite) TestProcMount() {
 	assert.DirExists(s.T(), procPath, "/proc должен существовать внутри контейнера")
 	assert.FileExists(s.T(), filepath.Join(procPath, "1", "cmdline"), "/proc должен быть смонтирован: ожидается /proc/1/cmdline")
 }
+
+// ============================================================================
+// Запускаемая команда становится PID=1 внутри контейнера и утилита ждёт её завершения (foreground)
+// ============================================================================
 
 func (s *ContainerTestSuite) TestPID1() {
 	cmdlinePath := filepath.Join("/proc", strconv.Itoa(s.containerPid), "root", "proc", "1", "cmdline")
@@ -160,6 +180,10 @@ func (s *ContainerTestSuite) TestPID1() {
 
 	assert.Equal(s.T(), "sh", processName, "PID=1 должен быть 'sh'")
 }
+
+// ============================================================================
+// UTS namespace, внутри которого hostname устанавливается в значение из поля hostname конфига.
+// ============================================================================
 
 func (s *ContainerTestSuite) TestHostname() {
 	cmd := exec.Command("nsenter", "-t", strconv.Itoa(s.containerPid), "-u", "hostname")
