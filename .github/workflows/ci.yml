@@ -1,4 +1,4 @@
-name: Test My Containers Implementation CI
+name: apartapatia-runtime CI
 
 on:
    push:
