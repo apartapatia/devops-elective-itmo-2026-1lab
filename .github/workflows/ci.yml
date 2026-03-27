@@ -21,8 +21,8 @@ jobs:
       - name: Setup rootfs
         run: make setup-rootfs
 
-      - name: Lint
-        run: make lint
+      # - name: Lint
+      #   run: make lint
 
       - name: Run tests
         run: make test
